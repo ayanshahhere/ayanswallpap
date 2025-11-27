@@ -1,0 +1,179 @@
+wallpaper-website/
+│── index.html
+│── style.css
+│── script.js
+└── wallpapers/
+       ├── wallpaper1.jpg
+       ├── wallpaper2.jpg
+       └── wallpaper3.jpg
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallpaper Downloads</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Premium Wallpaper Gallery</h1>
+        <p>Download HD & 4K wallpapers for free</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search wallpapers...">
+    </div>
+
+    <section class="gallery" id="gallery"></section>
+
+    <footer>
+        <p>© 2025 Wallpaper Gallery. All Rights Reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #0d0d0d;
+    color: #e5e5e5;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #0d0d0d, #222);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+}
+
+.search-container {
+    text-align: center;
+    margin: 25px 0;
+}
+
+#searchInput {
+    width: 60%;
+    max-width: 400px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    border-radius: 30px;
+    outline: none;
+    border: none;
+    background: #1c1c1c;
+    color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.wallpaper-card {
+    background: #1c1c1c;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.wallpaper-card:hover {
+    transform: translateY(-5px);
+}
+
+img.wallpaper {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.download-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 18px;
+    background: #0078ff;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.download-btn:hover {
+    background: #005fcc;
+}
+
+.counter {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #bbbbbb;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background: #111;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+// List of wallpapers
+const wallpapers = [
+    "wallpaper1.jpg",
+    "wallpaper2.jpg",
+    "wallpaper3.jpg"
+];
+
+// Load gallery
+const gallery = document.getElementById("gallery");
+
+// Load download counts from localStorage
+let downloadCounts = JSON.parse(localStorage.getItem("downloadCounts")) || {};
+
+// Initialize count if not exists
+wallpapers.forEach(w => {
+    if (!downloadCounts[w]) downloadCounts[w] = 0;
+});
+
+// Render wallpapers
+function displayWallpapers(filter = "") {
+    gallery.innerHTML = ""; // Clear gallery
+
+    wallpapers
+        .filter(file => file.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(file => {
+            const card = document.createElement("div");
+            card.classList.add("wallpaper-card");
+
+            card.innerHTML = `
+                <img class="wallpaper" src="wallpapers/${file}">
+                <a class="download-btn" href="wallpapers/${file}" download onclick="increaseDownload('${file}')">Download</a>
+                <div class="counter">Downloads: ${downloadCounts[file]}</div>
+            `;
+
+            gallery.appendChild(card);
+        });
+}
+
+displayWallpapers();
+
+// Search feature
+document.getElementById("searchInput").addEventListener("input", (e) => {
+    displayWallpapers(e.target.value);
+});
+
+// Increase download count
+function increaseDownload(file) {
+    downloadCounts[file]++;
+    localStorage.setItem("downloadCounts", JSON.stringify(downloadCounts));
+    displayWallpapers(document.getElementById("searchInput").value);
+}
